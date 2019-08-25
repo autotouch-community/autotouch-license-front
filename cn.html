@@ -1,0 +1,103 @@
+<html>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>AutoTouch</title>
+    <style>
+        * {
+            /*font-family:"Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", "DejaVu Sans", Verdana, sans-serif;*/
+            /*font-family: "Bitter",serif;*/
+            font-family: HelveticaNeue, Verdana, Helvetica, 'Open Sans', sans-serif;
+        }
+
+        body {
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        .wrapper {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .field {
+            padding: 0px;
+            margin: 15px 15px;
+        }
+
+        .btn:focus {
+            outline: none
+        }
+
+        .btn {
+            font-size: 1.4rem;
+            font-weight: 500;
+            color: #fff;
+            /* text-shadow: -2px 2px #346392; */
+            background-image: linear-gradient(to top, #6496c8, #346392);
+            box-shadow: 0 0 2px #6496c8;
+            border-radius: 4px;
+            border: none;
+            padding: 1rem;
+        }
+
+        .btn:hover {
+            cursor: hand;
+        }
+
+        .btn:active {
+            -webkit-box-shadow: inset 0 0 0 1px #27496d, inset 0 5px 30px #193047;
+            -moz-box-shadow: inset 0 0 0 1px #27496d, inset 0 5px 30px #193047;
+            box-shadow: inset 0 0 0 1px #27496d, inset 0 5px 30px #193047;
+        }
+
+        .btn-big {
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+        <div class="field">
+            <p style="font-size: 1.1rem;">中国大陆用户请通过如下途径购买，一年授权价格9.99美元：</>
+        </div>
+        <div class="field">
+            <form id="form_pay" name="form_pay" action="https://www.paypal.com/cgi-bin/webscr" method="post">
+                <div style="display:none">
+                    <input type="hidden" name="cmd" value="_xclick"><br />
+                    <input type="hidden" name="business" value="iain912@hotmail.com"><br />
+                    <input type="hidden" name="item_name" value="AutoTouch License"><br />
+                    <input type="hidden" name="amount" value="9.99"><br />
+                    <input type="hidden" name="currency_code" value="USD"><br />
+                    <input type="hidden" name="return"
+                        value="https://autotouch.net/server/license/paypal_pdt.php"><br />
+                    <input type="hidden" name="notify_url"
+                        value="https://autotouch.net/server/license/paypal_ipn.php"><br />
+                    <input type="hidden" name="invoice" value="<?php echo $invoice ?>"><br />
+                    <input type="hidden" name="custom" value="<?php echo $id ?>"><br />
+                    <input type="hidden" name="lc" value="EN"><br />
+                </div>
+                <input type="submit" value="用PayPal购买" class="btn btn-big" />
+            </form>
+        </div>
+        <div class="field">
+            <button class="btn btn-big btn-taobao" onclick="redirectToTaobao();">用淘宝购买</button>
+        </div>
+        <div class="field" style="font-size: 1.1rem;">
+            <p><a href="https://t.me/joinchat/EGJlcBFK-ArD5hVy7NHDew">Telegram</a></p>
+            <p>QQ群：762950848</p>
+            <img style="max-width: 200px;" src="./static/img/qqgroup.JPG">
+        </div>
+    </div>
+
+    <script>
+        function redirectToTaobao() {
+            location.href = '/server/license/redirect.php?to=taobao&id=<?php echo $id ?>';
+        }
+    </script>
+</body>

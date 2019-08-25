@@ -1,0 +1,679 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
+    <title>AutoTouch Licenses Management</title>
+
+    <style>
+        * {
+            /*font-family:"Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", "DejaVu Sans", Verdana, sans-serif;*/
+            /*font-family: "Bitter",serif;*/
+            font-family: HelveticaNeue, Verdana, Helvetica, 'Open Sans', sans-serif;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        body {
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        .wrapper {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        #loading-flag {
+            display: none;
+        }
+
+        .title {
+            margin: 0px auto 5px auto;
+            padding: 20px;
+            text-align: center;
+            font-size: 32px;
+            font-weight: 700;
+            font-family: HelveticaNeue-CondensedBlack;
+        }
+
+        .language {
+            margin: 0px auto 0px auto;
+            padding: 0px 20px 20px 20px;
+            text-align: center;
+        }
+
+        .language>a {
+            height: 14px;
+            text-decoration: none;
+            color: #001f3f;
+            cursor: hand;
+            margin-left: 10px;
+            margin-right: 10px;
+        }
+
+        .instructions {
+            padding: 5px 20px 20px 20px;
+        }
+
+        .instructions>p {
+            font-size: 12px;
+            padding: 0 0 10px 0;
+        }
+
+        .instructions>h3 {
+            text-align: center;
+        }
+
+        .field {
+            padding: 0px;
+            margin: 15px 15px;
+        }
+
+        .field-border {
+            border: 1px solid #EEEEEE;
+            border-radius: 4px;
+        }
+
+        .validated-field {
+            width: 100%;
+            box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+            border: 1px solid #eee;
+            margin: 20px auto;
+            padding: 5px;
+            background-color: #f4f4f4;
+
+            border-radius: 3px;
+            -moz-border-radius: 3px;
+            -webkit-border-radius: 3px;
+
+            overflow: auto;
+        }
+
+        .validated-field>div {
+            margin: 0 auto;
+            display: inline-block;
+            font-size: 14px;
+            font-weight: 800;
+            line-height: 16px;
+
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .validated-field>div>img {
+            width: 32px;
+            height: 32px;
+            margin-right: 8px;
+        }
+
+        .btn:focus {
+            outline: none
+        }
+
+        .btn {
+            font-size: 1.4rem;
+            font-weight: 500;
+            color: #fff;
+            /* text-shadow: -2px 2px #346392; */
+            /* background-image: linear-gradient(to top, #6496c8, #346392); */
+            /* box-shadow: 0 0 2px #6496c8; */
+            background-color: #5182b6;
+            border-radius: 4px;
+            border: none;
+            padding: 1rem;
+        }
+
+        .btn:hover {
+            /*
+    -webkit-box-shadow: inset 0 0 0 1px #27496d,0 5px 15px #193047;
+    -moz-box-shadow: inset 0 0 0 1px #27496d,0 5px 15px #193047;
+    box-shadow: inset 0 0 0 1px #27496d,0 5px 15px #193047;
+    */
+            cursor: hand;
+        }
+
+        .btn:active {
+            -webkit-box-shadow: inset 0 0 0 1px #27496d, inset 0 5px 30px #193047;
+            -moz-box-shadow: inset 0 0 0 1px #27496d, inset 0 5px 30px #193047;
+            box-shadow: inset 0 0 0 1px #27496d, inset 0 5px 30px #193047;
+        }
+
+        .btn-big {
+            width: 100%;
+        }
+
+        .btn-paypal {}
+
+        .btn-query {
+            font-size: 0.8rem;
+            width: 100%;
+            padding: 0.5rem;
+        }
+
+        .btn-license-operation {
+            font-size: 10px;
+            width: 100%;
+            padding: 2px;
+            margin: 2px;
+        }
+
+        .btn-license-key {
+            font-size: 7px;
+            padding: 1px 1px;
+        }
+
+        .query-forms {
+            width: 100%;
+            border: 1px solid #ddd;
+            margin: 20px auto;
+            padding: 5px;
+            /*background-color: #eee;*/
+
+            border-radius: 3px;
+            -moz-border-radius: 3px;
+            -webkit-border-radius: 3px;
+        }
+
+        .query-forms tr td {
+            padding: 3px 5px;
+        }
+
+
+        .query-forms tr td:first-child {
+            width: 50%;
+            text-align: left;
+        }
+
+        .query-forms tr td:last-child {
+            width: 50%;
+            text-align: right;
+        }
+
+        .query-forms input[type="text"],
+        .query-forms input[type="email"] {
+            width: 100%;
+            height: 30px;
+            font-size: 1.0rem;
+
+            background-color: #eeeeee;
+            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.03) inset;
+            border: 0;
+            border-radius: 4px;
+            outline: 0;
+        }
+
+        .table-licenses {
+            width: 100%;
+            border: 1px solid #ddd;
+            border-collapse: collapse;
+        }
+
+        .table-licenses td {
+            border: 1px solid #ddd;
+            padding: 5px;
+            height: 30px;
+            font-size: 7px;
+        }
+
+        .table-licenses thead tr {
+            background-color: #EEEEEE;
+            font-size: 0.5rem;
+            font-weight: normal;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .table-licenses tr td:first-child {}
+
+        .table-licenses tr td:last-child {
+            text-align: center;
+        }
+
+        .mask {
+            background-color: rgba(43, 140, 205, 0.6);
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            margin-top: 0;
+            margin-left: 0;
+        }
+
+        .price-field {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #fff;
+            text-align: center;
+            background-image: linear-gradient(to top, #ff8a00, #da1b60);
+            box-shadow: 0 0 3px #ad3d65;
+            border-radius: 4px;
+            padding: 1rem;
+            margin-bottom: 1.6rem;
+        }
+
+        .price-field>div {
+            margin-top: 0.3rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .not-license-found {
+            font-size: 20px;
+            font-weight: bold;
+            background-color: #EEEEEE;
+            text-align: center;
+            padding: 10px;
+        }
+
+        .centered {
+            position: fixed;
+            /* or absolute */
+            top: 50%;
+            left: 50%;
+        }
+
+        .spinner {
+            z-index: 10000;
+            width: 200px;
+            height: 200px;
+        }
+    </style>
+
+</head>
+
+<body ontouchstart="" onmouseover="">
+
+    <div class="wrapper" id="app">
+
+        <bounce-loader class="centered spinner" :loading="loading"></bounce-loader>
+
+        <div class="title-field">
+            <div class="title">{{tran("AutoTouch Licenses")}}</div>
+            <div class="language">
+                <a :href="`?id=${deviceId}&lang=en`">English</a>
+                <a :href="`?id=${deviceId}&lang=ja`">日本語</a>
+                <a :href="`?id=${deviceId}&lang=zh`">中文</a>
+            </div>
+        </div>
+
+        <div class="field" id="div-current-device-is-activated" v-if="isCurrentDeviceActivated">
+            <div class="validated-field">
+                <div>
+                    <img src="./static/img/icon-validated.png">
+                    {{tran("Current device is activated!")}}
+                </div>
+            </div>
+        </div>
+
+        <div class="field price-field">
+            <div>{{tran("$9.99 USD per year")}}</div>
+            <div>{{tran("Transferable from one device to another")}}</div>
+        </div>
+
+        <div class="field">
+            <div ref="paypal" class="paypal-button-container"></div>
+        </div>
+
+        <div class="field" v-if="deviceId && !isCurrentDeviceActivated">
+            <button class="btn btn-big btn-taobao"
+                v-on:click="doActivateDevice(null, deviceId);">{{tran("Activate Current Device")}}</button>
+        </div>
+
+        <div class="field">
+            <button class="btn btn-big btn-licenses"
+                v-on:click="toggleQueryField()">{{tran("Query My Licenses")}}</button>
+        </div>
+        <div class="field" v-if="showQueryField">
+            <table class="query-forms">
+                <tr>
+                    <td><input type="text" v-model="queryBy.licenseKey"></td>
+                    <td><input type="submit" class="btn btn-query" :value="tran('Query by License Key')"
+                            v-on:click="queryLicenses('LICENSE_KEY')"></td>
+                </tr>
+                <tr>
+                    <td><input type="email" v-model="queryBy.payerEmail"></td>
+                    <td><input type="submit" class="btn btn-query" :value="tran('Query by Payer Email')"
+                            v-on:click="queryLicenses('PAYPAL_EMAIL')"></td>
+                </tr>
+                <tr>
+                    <td><input type="text" v-model="queryBy.activatedDevice"></td>
+                    <td><input type="submit" class="btn btn-query" :value="tran('Query by SN of Activated Device')"
+                            v-on:click="queryLicenses('ACTIVATED_DEVICE')"></td>
+                </tr>
+            </table>
+            <table class="table-licenses" id="table-licenses" v-if="queried && licenses.length > 0">
+                <thead>
+                    <tr>
+                        <th>{{tran("License")}}</th>
+                        <th>{{tran("Activated Device SN")}}</th>
+                        <th>{{tran("Operations")}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="item in licenses">
+                        <td>
+                            <div>
+                                <div>{{tran("License Key")}}:<button class="btn-license-key"
+                                        v-on:click="copyText(item.license.licenseKey)">{{item.license.licenseKey}}</button>
+                                </div>
+                                <div>{{tran("Expires")}}:
+                                    <template
+                                        v-if="item.license.expireTime">{{timeFormat(item.license.expireTime)}}</template>
+                                    <template
+                                        v-if="item.activation && item.activation.activatedTime && !item.license.expires">{{tran("forever")}}</template>
+                                </div>
+                                <div>{{tran("Status")}}:
+                                    <template
+                                        v-if="item.license.expireTime && Date.now() > new Date(item.expireTime)">{{tran("Expired")}}</template>
+                                    <template v-else>{{item.license.status}}</template>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div v-if="item.activation">{{item.activation.deviceSign}}</div>
+                            <div v-if="item.activation && item.activation.deviceSign === deviceId" style="color:red;">
+                                ({{tran("current device")}})</div>
+                        </td>
+                        <td>
+                            <div v-if="item.license.status == 'REFUNDED'">{{tran("Refunded")}}</div>
+                            <div v-else-if="item.license.status == 'REVOKED'">{{tran("Revoked")}}</div>
+                            <div v-else-if="isExpired(item.license.expire_time)">{{tran("Expired")}}</div>
+                            <template v-else>
+                                <div v-if="isActivationLocked(item.license.activationLockTo)">
+                                    {{tran("One activation a day!")}}</div>
+                                <template v-else>
+                                    <button v-if="deviceId && !isCurrentDeviceActivated"
+                                        class="btn btn-license-operation"
+                                        v-on:click="doActivateDevice(item.license.licenseKey, deviceId)">{{tran("Activate Current Device")}}</button>
+                                    <button class="btn btn-license-operation"
+                                        v-on:click="doActivateDevice(item.license.licenseKey)">{{tran("Activate Another Device")}}</button>
+                                </template>
+                            </template>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div v-if="queried && licenses.length===0" class="not-license-found">{{tran("No license found!")}}</div>
+        </div>
+
+        <div class="field field-border" style="text-align:center;padding: 1rem;">
+            <a style="font-size: 1.1rem; color: #333;" :href="`cn.html?id=${deviceId}`">中国大陆用户请从这里购买</a>
+        </div>
+
+        <div class="instructions" id="instructions-field">
+            <h3>{{tran("Instructions")}}</h3>
+            <p>{{tran("NEW_AGREEMENT1")}}</p>
+            <p>{{tran("NEW_AGREEMENT2")}}</p>
+            <p>{{tran("NEW_AGREEMENT3")}}</p>
+            <p>{{tran("NEW_AGREEMENT4")}}</p>
+            <p>{{tran("NEW_AGREEMENT5")}}</p>
+        </div>
+
+        <div class="field" style="text-align:center">
+            <h3>Community</h3>
+            <p><a href="https://discordapp.com/invite/GUXu4uZ">Discord</a></p>
+            <p><a href="https://t.me/joinchat/EGJlcBFK-ArD5hVy7NHDew">Telegram</a></p>
+            <p><a href="https://www.reddit.com/r/autotouch/">Reddit</a></p>
+            <p style="font-size: 1.0rem;">QQ Group：762950848</p>
+            <!-- <img style="max-width: 160px;" src="../static/img/qqgroup.JPG"> -->
+        </div>
+
+    </div>
+
+    <script src="./static/js/vue.min.js"></script>
+    <script src="./static/js/vue-spinner.min.js"></script>
+    <script src="./static/js/axios.min.js"></script>
+    <script src="./static/js/moment.min.js"></script>
+    <script src="./static/js/i18n.js"></script>
+    <script src="./static/js/config.js"></script>
+    <script type="text/javascript">
+
+        const server = config.server;
+        const payPalClientId = config.payPalClientId;
+        const price = config.price;
+
+        let params = (new URL(document.location)).searchParams;
+        let current_device_sn = params.get("id");
+        if (!current_device_sn || current_device_sn.length == 0 || current_device_sn == 'null') {
+            current_device_sn = null;
+        }
+
+        let lang = params.get("lang");
+        if (!lang || lang.length == 0) {
+            lang = 'en';
+        }
+
+        const BounceLoader = VueSpinner.BounceLoader;
+
+        var app = new Vue({
+            el: '#app',
+            components: {
+                BounceLoader
+            },
+            data: {
+                deviceId: current_device_sn,
+                isCurrentDeviceActivated: false,
+                showQueryField: false,
+                queried: false,
+                queryBy: {
+                    licenseKey: null,
+                    payerEmail: null,
+                    activatedDevice: current_device_sn,
+                },
+                licenses: [],
+                lang: lang,
+                loading: false,
+            },
+            created() {
+                if (this.deviceId) {
+                    this.checkCurrentDevice();
+                }
+            },
+            mounted: function () {
+                this.loading = true;
+                const script = document.createElement("script");
+                script.src = `https://www.paypal.com/sdk/js?client-id=${payPalClientId}&currency=USD`;
+                script.addEventListener("load", this.setLoaded);
+                document.body.appendChild(script);
+            },
+            methods: {
+                tran(key) {
+                    return i18n[this.lang][key];
+                },
+                timeFormat(t) {
+                    return moment(t).format('YYYY-MM-DD HH:mm:ss');
+                },
+                toggleQueryField() {
+                    this.showQueryField = !this.showQueryField;
+                },
+                checkCurrentDevice() {
+                    let self = this;
+
+                    self.loading = true;
+
+                    const url = `${server}/license?id=${self.deviceId}`;
+
+                    axios
+                        .get(url)
+                        .then(function (response) {
+                            const { validated, key, create_time } = response.data;
+                            self.isCurrentDeviceActivated = validated;
+                        })
+                        .catch(function (error) {
+                            self.showModal('alert', 'ERROR', `${resp.statusText}`);
+                        })
+                        .finally(function () {
+                            self.queried = true;
+                            self.loading = false;
+                        });
+                },
+                queryLicenses(by) {
+                    const self = this;
+
+                    self.loading = true;
+
+                    let value;
+                    if (by === 'LICENSE_KEY') {
+                        value = this.queryBy.licenseKey;
+                    } else if (by === 'PAYPAL_EMAIL') {
+                        value = this.queryBy.payerEmail;
+                    } else if (by === 'ACTIVATED_DEVICE') {
+                        value = this.queryBy.activatedDevice;
+                    } else {
+                        return;
+                    }
+
+                    const url = `${server}/query`;
+
+                    axios
+                        .get(url, {
+                            params: {
+                                by,
+                                value
+                            }
+                        })
+                        .then(function (response) {
+                            const { items, total } = response.data;
+                            self.licenses = items;
+                            self.total = total;
+                        })
+                        .catch(function (error) {
+                            alert(error.response.data);
+                        })
+                        .finally(function () {
+                            self.queried = true;
+                            self.loading = false;
+                        });
+                },
+                doActivateDevice(licenseKey, deviceSign) {
+                    const self = this;
+
+                    if (!licenseKey) {
+                        licenseKey = prompt(this.tran("License Key you want to use:"), "");
+                        // If the user clicks "OK", the input value is returned. If the user clicks "cancel", null is returned. 
+                        // If the user clicks OK without entering any text, an empty string is returned.
+                        if (!licenseKey) {
+                            return;
+                        }
+                    }
+
+                    if (!deviceSign) {
+                        deviceSign = prompt(this.tran("Serial Number of the device you want to activate:"), "");
+                        if (!deviceSign) {
+                            return;
+                        };
+                    } else {
+                        if (!confirm('Are you sure to activate current device with this license?')) {
+                            return;
+                        }
+                    }
+
+                    self.loading = true;
+
+                    const url = `${server}/activate`;
+                    axios
+                        .get(url, {
+                            params: {
+                                licenseKey: licenseKey.trim(),
+                                deviceSign: deviceSign.trim(),
+                            }
+                        })
+                        .then(function (response) {
+                            alert('Activation successful!');
+                            self.checkCurrentDevice();
+                        })
+                        .catch(function (error) {
+                            alert(error.response.data);
+                        })
+                        .finally(() => {
+                            self.loading = false;
+                        });
+                },
+                isExpired: function (t) {
+                    if (!t) return false;
+                    const expireTime = new Date(t);
+                    const utcNow = moment().utc().toDate();
+                    return utcNow > expireTime;
+                },
+                isActivationLocked(activation_lock_to) {
+                    if (!activation_lock_to) return false;
+                    const activationLockToTime = new Date(activation_lock_to);
+                    const utcNow = moment().utc().toDate();
+                    return utcNow < activationLockToTime;
+                },
+                copyText: function (text) {
+                    window.prompt(this.tran("Select all and copy here:"), text);
+                },
+                setLoaded() {
+                    this.loading = false;
+                    this.renderPayPalButton();
+                },
+                renderPayPalButton() {
+                    const self = this;
+                    window.paypal.Buttons({
+                        style: {
+                            layout: 'horizontal',
+                            color: 'gold',
+                            shape: 'rect',
+                            label: 'pay',
+                            tagline: false
+                        },
+                        createOrder: function (data, actions) {
+                            return actions.order.create({
+                                purchase_units: [{
+                                    description: 'AutoTouch iOS one year license',
+                                    amount: {
+                                        currency_code: 'USD',
+                                        value: price
+                                    }
+                                }]
+                            });
+                        },
+                        onApprove: function (data, actions) {
+                            self.loading = true;
+
+                            return actions.order.capture()
+                                .then(function (details) {
+                                    return fetch(`${server}/paypal-transaction-complete`, {
+                                        method: 'post',
+                                        headers: {
+                                            'content-type': 'application/json'
+                                        },
+                                        body: JSON.stringify({
+                                            orderId: data.orderID,
+                                            deviceSign: self.deviceId,
+                                        })
+                                    }).then(resp => {
+                                        if (resp.status === 200) {
+                                            if (self.deviceId) {
+                                                self.checkCurrentDevice();
+                                            }
+                                            alert("Successful!");
+                                        } else {
+                                            alert(resp.statusText);
+                                        }
+                                    }).catch(error => {
+                                        alert(error.response.data);
+                                    }).finally(() => {
+                                        self.loading = false;
+                                    });
+                                });
+                        },
+                        onError: error => {
+                            alert(error);
+                            this.loading = false;
+                        }
+                    }).render(self.$refs.paypal);
+                }
+            }
+        });
+    </script>
+
+</body>
+
+</html>
