@@ -582,6 +582,8 @@
                         .then(function (response) {
                             alert('Activation successful!');
                             self.checkCurrentDevice();
+                            this.queryBy.activatedDevice = deviceId;
+                            self.queryLicenses('ACTIVATED_DEVICE');
                         })
                         .catch(function (error) {
                             alert(error.response.data);
@@ -648,6 +650,7 @@
                                         if (resp.status === 200) {
                                             if (self.deviceId) {
                                                 self.checkCurrentDevice();
+                                                this.queryBy.activatedDevice = deviceId;
                                                 self.queryLicenses('ACTIVATED_DEVICE');
                                             }
                                             alert("Successful!");
