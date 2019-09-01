@@ -108,8 +108,6 @@
         }
 
         .validated-field>div>img {
-            width: 32px;
-            height: 32px;
             margin-right: 8px;
         }
 
@@ -121,21 +119,14 @@
             font-size: 1.4rem;
             font-weight: 500;
             color: #fff;
-            /* text-shadow: -2px 2px #346392; */
-            /* background-image: linear-gradient(to top, #6496c8, #346392); */
-            /* box-shadow: 0 0 2px #6496c8; */
-            background-color: #5182b6;
+            background: #5182b6;
             border-radius: 4px;
             border: none;
             padding: 1rem;
+            -webkit-appearance: none;
         }
 
         .btn:hover {
-            /*
-    -webkit-box-shadow: inset 0 0 0 1px #27496d,0 5px 15px #193047;
-    -moz-box-shadow: inset 0 0 0 1px #27496d,0 5px 15px #193047;
-    box-shadow: inset 0 0 0 1px #27496d,0 5px 15px #193047;
-    */
             cursor: hand;
         }
 
@@ -272,15 +263,13 @@
 
         .centered {
             position: fixed;
-            /* or absolute */
             top: 50%;
             left: 50%;
-        }
-
-        .spinner {
-            z-index: 10000;
-            width: 200px;
-            height: 200px;
+            transform: translate(-50%, -50%);
+            transform: -webkit-translate(-50%, -50%);
+            transform: -moz-translate(-50%, -50%);
+            transform: -ms-translate(-50%, -50%);
+            z-index: 9999;
         }
     </style>
 
@@ -290,7 +279,7 @@
 
     <div class="wrapper" id="app">
 
-        <bounce-loader class="centered spinner" :loading="loading"></bounce-loader>
+        <bounce-loader class="centered" :loading="loading"></bounce-loader>
 
         <div class="title-field">
             <div class="title">{{tran("AutoTouch Licenses")}}</div>
@@ -304,7 +293,7 @@
         <div class="field" id="div-current-device-is-activated" v-if="isCurrentDeviceActivated">
             <div class="validated-field">
                 <div>
-                    <img src="./static/img/icon-validated.png">
+                    <img src="./static/img/icon-validated.png" style="width: 32px;height: 32px;">
                     {{tran("Current device is activated!")}}
                 </div>
             </div>
@@ -319,7 +308,7 @@
             <div ref="paypal" class="paypal-button-container"></div>
         </div>
 
-        <div class="field" v-if="deviceId && !isCurrentDeviceActivated">
+        <div class="field" v-bind:style="{ display: deviceId && !isCurrentDeviceActivated ? 'block' : 'none' }">
             <button class="btn btn-big btn-taobao"
                 v-on:click="doActivateDevice(null, deviceId);">{{tran("Activate Current Device")}}</button>
         </div>
@@ -486,7 +475,7 @@
                     return i18n[this.lang][key];
                 },
                 timeFormat(t) {
-                    return moment(t).format('YYYY-MM-DD HH:mm:ss');
+                    return moment.utc(t).local().format('YYYY-MM-DD HH:mm:ss');
                 },
                 toggleQueryField() {
                     this.showQueryField = !this.showQueryField;
@@ -505,7 +494,7 @@
                             self.isCurrentDeviceActivated = validated;
                         })
                         .catch(function (error) {
-                            self.showModal('alert', 'ERROR', `${resp.statusText}`);
+                            alert(error.response.data);
                         })
                         .finally(function () {
                             self.queried = true;
@@ -514,8 +503,6 @@
                 },
                 queryLicenses(by) {
                     const self = this;
-
-                    self.loading = true;
 
                     let value;
                     if (by === 'LICENSE_KEY') {
@@ -527,6 +514,15 @@
                     } else {
                         return;
                     }
+                    if (!value) {
+                        return;
+                    }
+                    value = value.trim();
+                    if (value == '') {
+                        return;
+                    }
+
+                    self.loading = true;
 
                     const url = `${server}/query`;
 
@@ -600,10 +596,10 @@
                     const utcNow = moment().utc().toDate();
                     return utcNow > expireTime;
                 },
-                isActivationLocked(activation_lock_to) {
-                    if (!activation_lock_to) return false;
-                    const activationLockToTime = new Date(activation_lock_to);
-                    const utcNow = moment().utc().toDate();
+                isActivationLocked(activationLockTo) {
+                    if (!activationLockTo) return false;
+                    const activationLockToTime = moment.utc(activationLockTo);
+                    const utcNow = moment().utc();
                     return utcNow < activationLockToTime;
                 },
                 copyText: function (text) {
@@ -652,6 +648,7 @@
                                         if (resp.status === 200) {
                                             if (self.deviceId) {
                                                 self.checkCurrentDevice();
+                                                self.queryLicenses('ACTIVATED_DEVICE');
                                             }
                                             alert("Successful!");
                                         } else {
