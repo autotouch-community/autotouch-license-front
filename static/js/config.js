@@ -1,5 +1,5 @@
 const config = {
     server: 'https://l.autotouch.net',
-    payPalClientId: 'AeFAwsLjD3eAbak7UKELhDsik-8xJTlvfzkyvS_dMvxtUFWMwqaz4WVpzuo7hQohQrqRVfOVZJINQkjE',
+    payPalClientId: 'AWE2Aw13lBPWZsUQRbIqpu1bPL9lvewu7wLMKMcgHyyjZdrSqOkSeg5W4CsEQKoOua6SJGOi3kgAUQ4V',
     price: 9.99
 }
