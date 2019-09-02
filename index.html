@@ -131,8 +131,6 @@
         }
 
         .btn:active {
-            -webkit-box-shadow: inset 0 0 0 1px #27496d, inset 0 5px 30px #193047;
-            -moz-box-shadow: inset 0 0 0 1px #27496d, inset 0 5px 30px #193047;
             box-shadow: inset 0 0 0 1px #27496d, inset 0 5px 30px #193047;
         }
 
@@ -140,7 +138,20 @@
             width: 100%;
         }
 
-        .btn-paypal {}
+        .btn-paypal {
+            background: #ffc439;
+            color: #333;
+            font-weight: 600;
+
+            background-image: url(static/img/paypal.png);
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 120px;
+        }
+
+        .btn-paypal:active {
+            box-shadow: inset 0 0 0 1px #ffc439, inset 0 5px 30px #c89e14;
+        }
 
         .btn-query {
             font-size: 0.8rem;
@@ -245,7 +256,6 @@
             box-shadow: 0 0 3px #ad3d65;
             border-radius: 4px;
             padding: 1rem;
-            margin-bottom: 1.6rem;
         }
 
         .price-field>div {
@@ -261,25 +271,82 @@
             padding: 10px;
         }
 
-        .centered {
+        @keyframes animation1 {
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.8;
+            }
+
+            100% {
+                display: none;
+                opacity: 0;
+            }
+        }
+
+        @keyframes animation2 {
+            0% {
+                opacity: 0.7;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+
+            100% {
+                display: none;
+                opacity: 0;
+            }
+        }
+
+        .mask {
+            background-color: black;
+            width: 100%;
+            height: 100%;
+
+            animation-name: animation2;
+            animation-duration: 2000ms;
+            animation-fill-mode: forwards;
+        }
+
+        .paid-success {
+            animation-name: animation1;
+            animation-duration: 2000ms;
+            animation-fill-mode: forwards;
+
+            width: 200px;
             position: fixed;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%);
-            transform: -webkit-translate(-50%, -50%);
-            transform: -moz-translate(-50%, -50%);
-            transform: -ms-translate(-50%, -50%);
+            margin-top: -100px;
+            margin-left: -100px;
             z-index: 9999;
         }
+
+        .paid-success>img {
+            margin-left: 25px;
+        }
+
+        .paid-success>h1 {
+            color: white;
+            font-weight: bold;
+            text-align: center;
+        }
     </style>
+
+    <script src="./static/js/vue.min.js"></script>
+    <script src="./static/js/axios.min.js"></script>
+    <script src="./static/js/moment.min.js"></script>
+    <script src="./static/js/i18n.js"></script>
+    <script src="./static/js/config.js"></script>
 
 </head>
 
 <body ontouchstart="" onmouseover="">
 
     <div class="wrapper" id="app">
-
-        <bounce-loader class="centered" :loading="loading"></bounce-loader>
 
         <div class="title-field">
             <div class="title">{{tran("AutoTouch Licenses")}}</div>
@@ -305,7 +372,7 @@
         </div>
 
         <div class="field">
-            <div ref="paypal" class="paypal-button-container"></div>
+            <button class="btn btn-big btn-paypal" v-on:click.stop.prevent="submitPayPal">&nbsp;</button>
         </div>
 
         <div class="field" v-bind:style="{ display: deviceId && !isCurrentDeviceActivated ? 'block' : 'none' }">
@@ -412,14 +479,32 @@
             <!-- <img style="max-width: 160px;" src="../static/img/qqgroup.JPG"> -->
         </div>
 
+        <div v-if="paid">
+            <div class="mask"></div>
+            <div class="paid-success centered">
+                <img src="static/img/icon-validated.png" alt="">
+                <h1>Thank you for purchasing!</h1>
+            </div>
+        </div>
+
+        <form id="form_pay" name="form_pay" action="https://www.paypal.com/cgi-bin/webscr" method="post"
+            style="display:none;">
+            <input type="hidden" name="cmd" value="_xclick">
+            <input type="hidden" name="business" value="niedelian@gmail.com">
+            <input type="hidden" name="item_name" value="AutoTouch License">
+            <input type="hidden" name="amount" value="9.99">
+            <input type="hidden" name="currency_code" value="USD">
+            <input type="hidden" name="return"
+                :value="`https://license.autotouch.net?paid=true&id=${deviceId}&lang=${lang}`">
+            <input type="hidden" name="notify_url" value="https://l.autotouch.net/paypal/ipn">
+            <input type="hidden" name="invoice" :value="invoice">
+            <input type="hidden" name="custom" :value="deviceId">
+            <input type="hidden" name="lc" value="EN">
+            <input type="submit" style="visibility:hidden" />
+        </form>
+
     </div>
 
-    <script src="./static/js/vue.min.js"></script>
-    <script src="./static/js/vue-spinner.min.js"></script>
-    <script src="./static/js/axios.min.js"></script>
-    <script src="./static/js/moment.min.js"></script>
-    <script src="./static/js/i18n.js"></script>
-    <script src="./static/js/config.js"></script>
     <script type="text/javascript">
 
         const server = config.server;
@@ -427,9 +512,9 @@
         const price = config.price;
 
         let params = (new URL(document.location)).searchParams;
-        let current_device_sn = params.get("id");
-        if (!current_device_sn || current_device_sn.length == 0 || current_device_sn == 'null') {
-            current_device_sn = null;
+        let currentDeviceSn = params.get("id");
+        if (!currentDeviceSn || currentDeviceSn.length == 0 || currentDeviceSn == 'null') {
+            currentDeviceSn = null;
         }
 
         let lang = params.get("lang");
@@ -437,38 +522,40 @@
             lang = 'en';
         }
 
-        const BounceLoader = VueSpinner.BounceLoader;
-
         var app = new Vue({
             el: '#app',
-            components: {
-                BounceLoader
-            },
             data: {
-                deviceId: current_device_sn,
+                deviceId: currentDeviceSn,
                 isCurrentDeviceActivated: false,
                 showQueryField: false,
                 queried: false,
                 queryBy: {
                     licenseKey: null,
                     payerEmail: null,
-                    activatedDevice: current_device_sn,
+                    activatedDevice: currentDeviceSn,
                 },
                 licenses: [],
                 lang: lang,
                 loading: false,
+                paid: false,
+            },
+            computed: {
+                invoice: function() {
+                    return moment().utc().format('YYYYMMDDHHmmss');
+                }
             },
             created() {
                 if (this.deviceId) {
                     this.checkCurrentDevice();
                 }
-            },
-            mounted: function () {
-                this.loading = true;
-                const script = document.createElement("script");
-                script.src = `https://www.paypal.com/sdk/js?client-id=${payPalClientId}&currency=USD`;
-                script.addEventListener("load", this.setLoaded);
-                document.body.appendChild(script);
+
+                let paid = params.get("paid") == 'true';
+                this.paid = paid;
+                if (paid && this.deviceId) {
+                    this.checkCurrentDevice();
+                    this.queryBy.activatedDevice = this.deviceId;
+                    this.queryLicenses();
+                }
             },
             methods: {
                 tran(key) {
@@ -607,68 +694,8 @@
                 copyText: function (text) {
                     window.prompt(this.tran("Select all and copy here:"), text);
                 },
-                setLoaded() {
-                    this.loading = false;
-                    this.renderPayPalButton();
-                },
-                renderPayPalButton() {
-                    const self = this;
-                    window.paypal.Buttons({
-                        style: {
-                            layout: 'horizontal',
-                            color: 'gold',
-                            shape: 'rect',
-                            label: 'pay',
-                            tagline: false
-                        },
-                        createOrder: function (data, actions) {
-                            return actions.order.create({
-                                purchase_units: [{
-                                    description: 'AutoTouch iOS one year license',
-                                    amount: {
-                                        currency_code: 'USD',
-                                        value: price
-                                    }
-                                }]
-                            });
-                        },
-                        onApprove: function (data, actions) {
-                            self.loading = true;
-
-                            return actions.order.capture()
-                                .then(function (details) {
-                                    return fetch(`${server}/paypal-transaction-complete`, {
-                                        method: 'post',
-                                        headers: {
-                                            'content-type': 'application/json'
-                                        },
-                                        body: JSON.stringify({
-                                            orderId: data.orderID,
-                                            deviceSign: self.deviceId,
-                                        })
-                                    }).then(resp => {
-                                        if (resp.status === 200) {
-                                            if (self.deviceId) {
-                                                self.checkCurrentDevice();
-                                                this.queryBy.activatedDevice = deviceId;
-                                                self.queryLicenses('ACTIVATED_DEVICE');
-                                            }
-                                            alert("Successful!");
-                                        } else {
-                                            alert(resp.statusText);
-                                        }
-                                    }).catch(error => {
-                                        alert(error.response.data);
-                                    }).finally(() => {
-                                        self.loading = false;
-                                    });
-                                });
-                        },
-                        onError: error => {
-                            alert(error);
-                            this.loading = false;
-                        }
-                    }).render(self.$refs.paypal);
+                submitPayPal() {
+                    document.getElementById('form_pay').submit();
                 }
             }
         });

@@ -69,18 +69,16 @@
         <div class="field">
             <form id="form_pay" name="form_pay" action="https://www.paypal.com/cgi-bin/webscr" method="post">
                 <div style="display:none">
-                    <input type="hidden" name="cmd" value="_xclick"><br />
-                    <input type="hidden" name="business" value="iain912@hotmail.com"><br />
-                    <input type="hidden" name="item_name" value="AutoTouch License"><br />
-                    <input type="hidden" name="amount" value="9.99"><br />
-                    <input type="hidden" name="currency_code" value="USD"><br />
-                    <input type="hidden" name="return"
-                        value="https://autotouch.net/server/license/paypal_pdt.php"><br />
-                    <input type="hidden" name="notify_url"
-                        value="https://autotouch.net/server/license/paypal_ipn.php"><br />
-                    <input type="hidden" name="invoice" value="<?php echo $invoice ?>"><br />
-                    <input type="hidden" name="custom" value="<?php echo $id ?>"><br />
-                    <input type="hidden" name="lc" value="EN"><br />
+                    <input type="hidden" name="cmd" value="_xclick">
+                    <input type="hidden" name="business" value="iain912@hotmail.com">
+                    <input type="hidden" name="item_name" value="AutoTouch License">
+                    <input type="hidden" name="amount" value="9.99">
+                    <input type="hidden" name="currency_code" value="USD">
+                    <input type="hidden" name="return" value="`https://license.autotouch.net?paid=true`">
+                    <input type="hidden" name="notify_url" value="https://l.autotouch.net/paypal/ipn">
+                    <input type="hidden" name="invoice" value="">
+                    <input type="hidden" name="custom" value="">
+                    <input type="hidden" name="lc" value="EN">
                 </div>
                 <input type="submit" value="用PayPal购买" class="btn btn-big" />
             </form>
@@ -97,7 +95,7 @@
 
     <script>
         function redirectToTaobao() {
-            location.href = '/server/license/redirect.php?to=taobao&id=<?php echo $id ?>';
+            location.href = 'http://item.taobao.com/item.htm?id=592536815953';
         }
     </script>
 </body>
