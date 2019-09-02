@@ -372,7 +372,7 @@
         </div>
 
         <div class="field">
-            <button class="btn btn-big btn-paypal" v-on:click.stop.prevent="submitPayPal">&nbsp;</button>
+            <button class="btn btn-big btn-paypal" v-on:click="submitPayPal">&nbsp;</button>
         </div>
 
         <div class="field" v-bind:style="{ display: deviceId && !isCurrentDeviceActivated ? 'block' : 'none' }">
@@ -487,22 +487,6 @@
             </div>
         </div>
 
-        <form id="form_pay" name="form_pay" action="https://www.paypal.com/cgi-bin/webscr" method="post"
-            style="display:none;">
-            <input type="hidden" name="cmd" value="_xclick">
-            <input type="hidden" name="business" value="niedelian@gmail.com">
-            <input type="hidden" name="item_name" value="AutoTouch License">
-            <input type="hidden" name="amount" value="9.99">
-            <input type="hidden" name="currency_code" value="USD">
-            <input type="hidden" name="return"
-                :value="`https://license.autotouch.net?paid=true&id=${deviceId}&lang=${lang}`">
-            <input type="hidden" name="notify_url" value="https://l.autotouch.net/paypal/ipn">
-            <input type="hidden" name="invoice" :value="invoice">
-            <input type="hidden" name="custom" :value="deviceId">
-            <input type="hidden" name="lc" value="EN">
-            <input type="submit" style="visibility:hidden" />
-        </form>
-
     </div>
 
     <script type="text/javascript">
@@ -538,11 +522,6 @@
                 lang: lang,
                 loading: false,
                 paid: false,
-            },
-            computed: {
-                invoice: function() {
-                    return moment().utc().format('YYYYMMDDHHmmss');
-                }
             },
             created() {
                 if (this.deviceId) {
@@ -695,7 +674,14 @@
                     window.prompt(this.tran("Select all and copy here:"), text);
                 },
                 submitPayPal() {
-                    document.getElementById('form_pay').submit();
+                    let target = '/global.html?';
+                    if (this.deviceId) {
+                        target += `id=${this.deviceId}`;
+                    }
+                    if (this.lang) {
+                        target += `lang=${this.lang}`;
+                    }
+                    location.href = target;
                 }
             }
         });
